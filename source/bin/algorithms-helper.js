@@ -28,6 +28,85 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var algorithms;
 (function (algorithms) {
+    var BinomialCoefficients = /** @class */ (function () {
+        function BinomialCoefficients() {
+        }
+        /**
+         * 计算二项式系数 C(n, k)
+         * @param n
+         * @returns
+         */
+        BinomialCoefficients.calculate = function (n) {
+            return this.factorial(2 * n) / (this.factorial(n) * this.factorial(n + 1));
+        };
+        BinomialCoefficients.factorial = function (n) {
+            if (n <= 1)
+                return 1;
+            if (this.Cache.has(n)) {
+                return this.Cache.get(n);
+            }
+            var value = n * this.factorial(n - 1);
+            this.Cache[n] = value;
+            return value;
+        };
+        BinomialCoefficients.Cache = new Map();
+        return BinomialCoefficients;
+    }());
+    algorithms.BinomialCoefficients = BinomialCoefficients;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
+    /**
+     * 计算 卡塔兰数。 动态规划解决方案
+     *
+     * https://zh.wikipedia.org/wiki/Catalan_number
+     */
+    var CatalanNumbers = /** @class */ (function () {
+        function CatalanNumbers() {
+        }
+        CatalanNumbers.recursiveHelper = function (rank) {
+            if (this.CachedCatalanNumbers.has(rank))
+                return this.CachedCatalanNumbers.get(rank);
+            var number = 0;
+            var lastRank = rank - 1;
+            for (var i = 0; i <= lastRank; ++i) {
+                var firstPart = this.recursiveHelper(i);
+                var secondPart = this.recursiveHelper(lastRank - i);
+                if (!this.CachedCatalanNumbers.has(i))
+                    this.CachedCatalanNumbers.set(i, firstPart);
+                if (!this.CachedCatalanNumbers.has(lastRank - i))
+                    this.CachedCatalanNumbers.set(lastRank - i, secondPart);
+                number = number + (firstPart * secondPart);
+            }
+            return number;
+        };
+        CatalanNumbers.getNumber = function (rank) {
+            return this.recursiveHelper(rank);
+        };
+        /**
+         * 使用二项式系数算法计算数字
+         * @param rank
+         * @returns
+         */
+        CatalanNumbers.getNumberByBinomialCoefficients = function (rank) {
+            return algorithms.BinomialCoefficients.calculate(rank);
+        };
+        CatalanNumbers.getRange = function (fromRank, toRank) {
+            var numbers = [];
+            if (fromRank > toRank)
+                return null;
+            for (var i = fromRank; i <= toRank; ++i)
+                numbers.push(this.getNumber(i));
+            return numbers;
+        };
+        /** 默认情况下，前两个卡塔兰数：0 和 1。 */
+        CatalanNumbers.CachedCatalanNumbers = new Map([[0, 1], [1, 1]]);
+        return CatalanNumbers;
+    }());
+    algorithms.CatalanNumbers = CatalanNumbers;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
     var Comparers = /** @class */ (function () {
         function Comparers() {
         }

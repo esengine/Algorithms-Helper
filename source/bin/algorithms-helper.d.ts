@@ -1,4 +1,36 @@
 declare module algorithms {
+    class BinomialCoefficients {
+        private static readonly Cache;
+        /**
+         * 计算二项式系数 C(n, k)
+         * @param n
+         * @returns
+         */
+        static calculate(n: number): number;
+        private static factorial;
+    }
+}
+declare module algorithms {
+    /**
+     * 计算 卡塔兰数。 动态规划解决方案
+     *
+     * https://zh.wikipedia.org/wiki/Catalan_number
+     */
+    class CatalanNumbers {
+        /** 默认情况下，前两个卡塔兰数：0 和 1。 */
+        private static readonly CachedCatalanNumbers;
+        private static recursiveHelper;
+        static getNumber(rank: number): number;
+        /**
+         * 使用二项式系数算法计算数字
+         * @param rank
+         * @returns
+         */
+        static getNumberByBinomialCoefficients(rank: number): number;
+        static getRange(fromRank: number, toRank: number): any[];
+    }
+}
+declare module algorithms {
     class Comparers {
         static isEqualTo<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
         static isLessThan<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
