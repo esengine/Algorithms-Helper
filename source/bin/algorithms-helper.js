@@ -243,6 +243,20 @@ var algorithms;
                 }
             });
         };
+        SkipList.prototype.copyTo = function (array, arrayIndex) {
+            if (array == null)
+                throw new Error('argument is null');
+            if (array.length == 0 || arrayIndex >= array.length || arrayIndex < 0)
+                throw new Error('index out of range');
+            var enumarator = this.getEnumerator();
+            for (var i = arrayIndex; i < array.length; ++i) {
+                var r = enumarator.next();
+                if (!r.done)
+                    array[i] = r.value;
+                else
+                    break;
+            }
+        };
         SkipList.prototype.clear = function () {
             this._count = 0;
             this._currentMaxLevel = 1;

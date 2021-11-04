@@ -81,6 +81,7 @@ declare module algorithms {
             result: T;
         };
         getEnumerator(): IterableIterator<T>;
+        copyTo(array: T[], arrayIndex: number): void;
         clear(): void;
     }
 }
