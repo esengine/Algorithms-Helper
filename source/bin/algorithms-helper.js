@@ -221,6 +221,51 @@ var algorithms;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
+    /**
+     * 地精排序
+     */
+    var GnomeSorter = /** @class */ (function () {
+        function GnomeSorter() {
+        }
+        GnomeSorter.gnomeSort = function (collection, comparer) {
+            if (comparer === void 0) { comparer = null; }
+            comparer = comparer || algorithms.Comparer.default;
+            this.gnomeSortAscending(collection, comparer);
+        };
+        GnomeSorter.gnomeSortAscending = function (collection, comparer) {
+            var pos = 1;
+            while (pos < collection.length) {
+                if (comparer.compare(collection[pos], collection[pos - 1]) >= 0) {
+                    pos++;
+                }
+                else {
+                    algorithms.Helpers.swap(collection, pos, pos - 1);
+                    if (pos > 1) {
+                        pos--;
+                    }
+                }
+            }
+        };
+        GnomeSorter.gnomeSortDescending = function (collection, comparer) {
+            var pos = 1;
+            while (pos < collection.length) {
+                if (comparer.compare(collection[pos], collection[pos - 1]) <= 0) {
+                    pos++;
+                }
+                else {
+                    algorithms.Helpers.swap(collection, pos, pos - 1);
+                    if (pos > 1) {
+                        pos--;
+                    }
+                }
+            }
+        };
+        return GnomeSorter;
+    }());
+    algorithms.GnomeSorter = GnomeSorter;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
     var HeapSorter = /** @class */ (function () {
         function HeapSorter() {
         }
@@ -302,6 +347,45 @@ var algorithms;
         return Helpers;
     }());
     algorithms.Helpers = Helpers;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
+    var QuickSorter = /** @class */ (function () {
+        function QuickSorter() {
+        }
+        QuickSorter.quickSort = function (collection, comparer) {
+            if (comparer === void 0) { comparer = null; }
+            var startIndex = 0;
+            var endIndex = collection.length - 1;
+            comparer = comparer || algorithms.Comparer.default;
+            this.internalQuickSort(collection, startIndex, endIndex, comparer);
+        };
+        /** 递归快速排序算法 */
+        QuickSorter.internalQuickSort = function (collection, leftmostIndex, rightmostIndex, comparer) {
+            if (leftmostIndex < rightmostIndex) {
+                var wallIndex = this.internalPartition(collection, leftmostIndex, rightmostIndex, comparer);
+                this.internalQuickSort(collection, leftmostIndex, wallIndex - 1, comparer);
+                this.internalPartition(collection, wallIndex + 1, rightmostIndex, comparer);
+            }
+        };
+        /** 分区函数，用于快速排序算法 */
+        QuickSorter.internalPartition = function (collection, leftmostIndex, rightmostIndex, comparer) {
+            var wallIndex, piviotIndex;
+            piviotIndex = rightmostIndex;
+            var pivotValue = collection[piviotIndex];
+            wallIndex = leftmostIndex;
+            for (var i = leftmostIndex; i <= (rightmostIndex - 1); i++) {
+                if (comparer.compare(collection[i], pivotValue) <= 0) {
+                    algorithms.Helpers.swap(collection, i, wallIndex);
+                    wallIndex++;
+                }
+            }
+            algorithms.Helpers.swap(collection, wallIndex, piviotIndex);
+            return wallIndex;
+        };
+        return QuickSorter;
+    }());
+    algorithms.QuickSorter = QuickSorter;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {

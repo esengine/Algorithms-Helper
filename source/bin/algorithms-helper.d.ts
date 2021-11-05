@@ -66,6 +66,16 @@ declare module algorithms {
     }
 }
 declare module algorithms {
+    /**
+     * 地精排序
+     */
+    class GnomeSorter {
+        static gnomeSort<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
+        static gnomeSortAscending<T>(collection: T[], comparer: Comparer<T>): void;
+        static gnomeSortDescending<T>(collection: T[], comparer: Comparer<T>): void;
+    }
+}
+declare module algorithms {
     class HeapSorter {
         /**
          * 按升序排序。 使用最大堆
@@ -111,6 +121,15 @@ declare module algorithms {
 declare module algorithms {
     interface IComparer<T> {
         compare(x: T, y: T): number;
+    }
+}
+declare module algorithms {
+    class QuickSorter {
+        static quickSort<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
+        /** 递归快速排序算法 */
+        private static internalQuickSort;
+        /** 分区函数，用于快速排序算法 */
+        private static internalPartition;
     }
 }
 declare module algorithms {
