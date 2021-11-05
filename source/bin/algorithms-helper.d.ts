@@ -1,4 +1,24 @@
 declare module algorithms {
+    class BinarySearcher<T extends IComparable<T>> {
+        private readonly _collection;
+        private readonly _comparer;
+        private _item;
+        private _currentItemIndex;
+        private _leftIndex;
+        private _rightIndex;
+        readonly current: T;
+        constructor(collection: T[], comparer: Comparer<T>);
+        /**
+         * 在列表中应用二分搜索
+         * @param item
+         * @returns
+         */
+        binarySearch(item: T): number;
+        moveNext(): boolean;
+        reset(): void;
+    }
+}
+declare module algorithms {
     class BinomialCoefficients {
         private static readonly Cache;
         /**
@@ -31,14 +51,66 @@ declare module algorithms {
     }
 }
 declare module algorithms {
+    abstract class Comparer<T> implements IComparer<T> {
+        static readonly default: DefaultComparer<IComparable<{}>>;
+        abstract compare(x: T, y: T): number;
+    }
+    class DefaultComparer<T extends IComparable<T>> extends Comparer<T> {
+        compare(x: T, y: T): number;
+    }
+}
+declare module algorithms {
     class Comparers {
         static isEqualTo<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
         static isLessThan<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
     }
 }
 declare module algorithms {
+    class HeapSorter {
+        /**
+         * 按升序排序。 使用最大堆
+         * @param collection
+         * @param comparer
+         */
+        static heapSort<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
+        /**
+         * 升序排列
+         * 使用最大堆
+         * @param collection
+         * @param comparer
+         */
+        static heapSortAscending<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
+        /**
+         * 从 collection 集合构建最大堆
+         * @param collection
+         * @param firstIndex
+         * @param lastIndex
+         * @param comparer
+         */
+        static buildMaxHeap<T>(collection: T[], firstIndex: number, lastIndex: number, comparer: Comparer<T>): void;
+        /**
+         * 两个索引（包括）之间的元素，在顶部保持最大值。
+         * @param collection
+         * @param nodeIndex
+         * @param lastIndex
+         * @param comparer
+         */
+        static maxHeapify<T>(collection: T[], nodeIndex: number, lastIndex: number, comparer: Comparer<T>): void;
+    }
+}
+declare module algorithms {
+    class Helpers {
+        static swap<T>(list: T[], firstIndex: number, secondIndex: number): void;
+    }
+}
+declare module algorithms {
     interface IComparable<T> {
         compareTo(other: T): number;
+    }
+}
+declare module algorithms {
+    interface IComparer<T> {
+        compare(x: T, y: T): number;
     }
 }
 declare module algorithms {

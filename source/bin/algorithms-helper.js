@@ -1,4 +1,14 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __generator = (this && this.__generator) || function (thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -26,6 +36,68 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var algorithms;
+(function (algorithms) {
+    var BinarySearcher = /** @class */ (function () {
+        function BinarySearcher(collection, comparer) {
+            this._currentItemIndex = 0;
+            this._leftIndex = 0;
+            this._rightIndex = 0;
+            if (collection == null)
+                throw new Error('collection is null');
+            this._collection = collection;
+            this._comparer = comparer;
+            algorithms.HeapSorter.heapSort(this._collection);
+        }
+        Object.defineProperty(BinarySearcher.prototype, "current", {
+            get: function () {
+                return this._collection[this._currentItemIndex];
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * 在列表中应用二分搜索
+         * @param item
+         * @returns
+         */
+        BinarySearcher.prototype.binarySearch = function (item) {
+            var notFound = true;
+            if (item == null) {
+                throw new Error('item to search for is not set');
+            }
+            this.reset();
+            this._item = item;
+            while ((this._leftIndex <= this._rightIndex) && notFound) {
+                notFound = this.moveNext();
+            }
+            if (notFound) {
+                this.reset();
+            }
+            return this._currentItemIndex;
+        };
+        BinarySearcher.prototype.moveNext = function () {
+            this._currentItemIndex = this._leftIndex + (this._rightIndex - this._leftIndex) / 2;
+            if (this._comparer.compare(this._item, this.current) < 0) {
+                this._rightIndex = this._currentItemIndex - 1;
+            }
+            else if (this._comparer.compare(this._item, this.current) > 0) {
+                this._leftIndex = this._currentItemIndex + 1;
+            }
+            else {
+                return false;
+            }
+            return true;
+        };
+        BinarySearcher.prototype.reset = function () {
+            this._currentItemIndex = -1;
+            this._leftIndex = 0;
+            this._rightIndex = this._collection.length - 1;
+        };
+        return BinarySearcher;
+    }());
+    algorithms.BinarySearcher = BinarySearcher;
+})(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
     var BinomialCoefficients = /** @class */ (function () {
@@ -107,6 +179,33 @@ var algorithms;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
+    var Comparer = /** @class */ (function () {
+        function Comparer() {
+        }
+        Object.defineProperty(Comparer, "default", {
+            get: function () {
+                return new DefaultComparer();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Comparer;
+    }());
+    algorithms.Comparer = Comparer;
+    var DefaultComparer = /** @class */ (function (_super) {
+        __extends(DefaultComparer, _super);
+        function DefaultComparer() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        DefaultComparer.prototype.compare = function (x, y) {
+            return x.compareTo(y);
+        };
+        return DefaultComparer;
+    }(Comparer));
+    algorithms.DefaultComparer = DefaultComparer;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
     var Comparers = /** @class */ (function () {
         function Comparers() {
         }
@@ -119,6 +218,90 @@ var algorithms;
         return Comparers;
     }());
     algorithms.Comparers = Comparers;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
+    var HeapSorter = /** @class */ (function () {
+        function HeapSorter() {
+        }
+        /**
+         * 按升序排序。 使用最大堆
+         * @param collection
+         * @param comparer
+         */
+        HeapSorter.heapSort = function (collection, comparer) {
+            if (comparer === void 0) { comparer = null; }
+            this.heapSortAscending(collection, comparer);
+        };
+        /**
+         * 升序排列
+         * 使用最大堆
+         * @param collection
+         * @param comparer
+         */
+        HeapSorter.heapSortAscending = function (collection, comparer) {
+            if (comparer === void 0) { comparer = null; }
+            comparer = comparer || algorithms.Comparer.default;
+            var lastIndex = collection.length - 1;
+            this.buildMaxHeap(collection, 0, lastIndex, comparer);
+            while (lastIndex >= 0) {
+                algorithms.Helpers.swap(collection, 0, lastIndex);
+                lastIndex--;
+                this.maxHeapify(collection, 0, lastIndex, comparer);
+            }
+        };
+        /**
+         * 从 collection 集合构建最大堆
+         * @param collection
+         * @param firstIndex
+         * @param lastIndex
+         * @param comparer
+         */
+        HeapSorter.buildMaxHeap = function (collection, firstIndex, lastIndex, comparer) {
+            var lastNodeWithChildren = lastIndex / 2;
+            for (var node = lastNodeWithChildren; node >= 0; --node) {
+                this.maxHeapify(collection, node, lastIndex, comparer);
+            }
+        };
+        /**
+         * 两个索引（包括）之间的元素，在顶部保持最大值。
+         * @param collection
+         * @param nodeIndex
+         * @param lastIndex
+         * @param comparer
+         */
+        HeapSorter.maxHeapify = function (collection, nodeIndex, lastIndex, comparer) {
+            var left = (nodeIndex * 2) + 1;
+            var right = left + 1;
+            var largest = nodeIndex;
+            if (left <= lastIndex && comparer.compare(collection[left], collection[nodeIndex]) > 0)
+                largest = left;
+            if (right <= lastIndex && comparer.compare(collection[right], collection[largest]) > 0)
+                largest = right;
+            if (largest != nodeIndex) {
+                algorithms.Helpers.swap(collection, nodeIndex, largest);
+                this.maxHeapify(collection, largest, lastIndex, comparer);
+            }
+        };
+        return HeapSorter;
+    }());
+    algorithms.HeapSorter = HeapSorter;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
+    var Helpers = /** @class */ (function () {
+        function Helpers() {
+        }
+        Helpers.swap = function (list, firstIndex, secondIndex) {
+            if (list.length < 2 || firstIndex == secondIndex)
+                return;
+            var temp = list[firstIndex];
+            list[firstIndex] = list[secondIndex];
+            list[secondIndex] = temp;
+        };
+        return Helpers;
+    }());
+    algorithms.Helpers = Helpers;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
