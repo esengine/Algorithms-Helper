@@ -350,6 +350,29 @@ var algorithms;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
+    var InsertionSorter = /** @class */ (function () {
+        function InsertionSorter() {
+        }
+        InsertionSorter.insertionSort = function (list, comparer) {
+            if (comparer === void 0) { comparer = null; }
+            comparer = comparer || algorithms.Comparer.default;
+            var i, j;
+            for (i = 1; i < list.length; i++) {
+                var value = list[i];
+                j = i - 1;
+                while ((j >= 0) && (comparer.compare(list[j], value) > 0)) {
+                    list[j + 1] = list[j];
+                    j--;
+                }
+                list[j + 1] = value;
+            }
+        };
+        return InsertionSorter;
+    }());
+    algorithms.InsertionSorter = InsertionSorter;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
     var QuickSorter = /** @class */ (function () {
         function QuickSorter() {
         }

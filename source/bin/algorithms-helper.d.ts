@@ -124,6 +124,11 @@ declare module algorithms {
     }
 }
 declare module algorithms {
+    class InsertionSorter {
+        static insertionSort<T extends IComparable<T>>(list: T[], comparer?: Comparer<T>): void;
+    }
+}
+declare module algorithms {
     class QuickSorter {
         static quickSort<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
         /** 递归快速排序算法 */
