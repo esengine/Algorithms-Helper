@@ -7,5 +7,9 @@ module algorithms {
         public static isLessThan<T extends IComparable<T>>(firstValue: T, secondValue: T) {
             return firstValue.compareTo(secondValue) < 0;
         }
+
+        public static isGreaterThan<T extends IComparable<T>>(firstValue: T, secondValue: T) {
+            return firstValue.compareTo(secondValue) > 0;
+        }
     }
 }

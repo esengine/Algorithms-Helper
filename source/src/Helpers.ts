@@ -8,5 +8,16 @@ module algorithms {
             list[firstIndex] = list[secondIndex];
             list[secondIndex] = temp;
         }
+
+        public static populate<T>(list: T[][], rows: number, columns: number, defaultValue: T) {
+            for (let i = 0; i < rows; i ++) {
+                for (let j = 0; j < columns; j ++) {
+                    if (list[i] == null)
+                        list[i] = [];
+
+                    list[i][j] = defaultValue;
+                }
+            }
+        }
     }
 }

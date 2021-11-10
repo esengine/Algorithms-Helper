@@ -1,4 +1,220 @@
 declare module algorithms {
+    enum TRaversalMode {
+        inOrder = 0,
+        preOrder = 1,
+        postOrder = 2
+    }
+    /**
+     * 实现通用的二叉搜索树数据结构
+     */
+    class BinarySearchTree<T extends IComparable<T>> {
+        protected _count: number;
+        protected _allowDuplicates: boolean;
+        protected _root: BSTNode<T>;
+        root: BSTNode<T>;
+        /**
+         * 如果allowDuplictes 设置为false，则不会插入重复项
+         * @param allowDuplicates
+         */
+        constructor(allowDuplicates?: boolean);
+        /**
+         * 将节点的值从其父节点对象替换为 newValue
+         * @param node
+         * @param newNode
+         */
+        protected _replaceNodeInParent(node: BSTNode<T>, newNode?: BSTNode<T>): void;
+        /**
+         * 删除指定的节点
+         * @param node
+         * @returns
+         */
+        protected _remove(node: BSTNode<T>): any;
+        /**
+         * 向树中插入一个新节点
+         * @param newNode
+         * @returns
+         */
+        protected _insertNode(newNode: BSTNode<T>): any;
+        /**
+         * 递归计算特定节点的树高
+         * @param node
+         * @returns
+         */
+        protected _getTreeHeight(node: BSTNode<T>): any;
+        /**
+         * 在给定值的情况下，在另一个节点的子树中查找一个节点
+         * @param currentNode
+         * @param item
+         * @returns
+         */
+        protected _findNode(currentNode: BSTNode<T>, item: T): BSTNode<T>;
+        /**
+         * 返回子树中的最小节点
+         * @param node
+         * @returns
+         */
+        protected _findMinNode(node: BSTNode<T>): BSTNode<T>;
+        /**
+         * 返回子树中的最大节点
+         * @param node
+         * @returns
+         */
+        protected _findMaxNode(node: BSTNode<T>): BSTNode<T>;
+        /**
+         * 与指定节点相比，查找 value 中的下一个较小节点。
+         * @param node
+         * @returns
+         */
+        protected _findNextSmaller(node: BSTNode<T>): BSTNode<T>;
+        /**
+         * 查找与指定节点相比值中下一个更大的节点
+         * @param node
+         * @returns
+         */
+        protected _findNextLarger(node: BSTNode<T>): BSTNode<T>;
+        /**
+         * 实现有序遍历以查找子树中的所有匹配元素
+         * @param currentNode
+         * @param match
+         * @param list
+         * @returns
+         */
+        protected _findAll(currentNode: BSTNode<T>, match: (v: T) => boolean, list: T[]): void;
+        /**
+         * 节点子树的有序遍历。 返回它访问的每个节点。
+         * @param currentNode
+         * @param list
+         * @returns
+         */
+        protected _inOrderTraverse(currentNode: BSTNode<T>, list: T[]): void;
+        /**
+         * 返回这棵树中元素的数量
+         */
+        readonly count: number;
+        /**
+         * 检查树是否为空
+         */
+        readonly isEmpty: boolean;
+        /**
+         * 返回树的高度
+         */
+        readonly height: any;
+        readonly allowsDuplicates: boolean;
+        /**
+         * 向树中插入一个元素
+         * @param item
+         */
+        insert(item: T): void;
+        /**
+         * 从树中删除一个元素
+         * @param item
+         */
+        remove(item: T): void;
+        /**
+         * 从树中删除最小值
+         */
+        removeMin(): void;
+        /**
+         * 从树中删除最大值
+         */
+        removeMax(): void;
+        /**
+         * 清除树中的所有元素
+         */
+        clear(): void;
+        /**
+         * 检查项目是否存在
+         * @param item
+         * @returns
+         */
+        contains(item: T): boolean;
+        /**
+         * 查找树中的最小值
+         * @returns
+         */
+        findMin(): T;
+        /**
+         * 与指定项相比，在树中查找下一个较小的元素
+         * @param item
+         * @returns
+         */
+        findNextSmaller(item: T): T;
+        /**
+         * 与指定项相比，在树中查找下一个较大的元素
+         * @param item
+         * @returns
+         */
+        findNextLarger(item: T): T;
+        /**
+         * 查找树中的最大值
+         * @returns
+         */
+        findMax(): T;
+        /**
+         * 在树中找到项目。 如果未找到则抛出异常
+         * @param item
+         * @returns
+         */
+        find(item: T): T;
+        /**
+         * 给定一个查找函数，找出所有匹配它的元素
+         * @param searchPredicate
+         * @returns
+         */
+        findAll(searchPredicate: (t: T) => boolean): any[];
+    }
+}
+declare module algorithms {
+    class BSTNode<T extends IComparable<T>> {
+        private _value;
+        private _parent;
+        private _left;
+        private _right;
+        constructor(value: T, parent?: BSTNode<T>, left?: BSTNode<T>, right?: BSTNode<T>);
+        value: T;
+        parent: BSTNode<T>;
+        leftChild: BSTNode<T>;
+        rightChild: BSTNode<T>;
+        /**
+         * 检查此节点是否有任何子节点
+         */
+        readonly hasChildren: boolean;
+        /**
+         * 检查此节点是否有左子节点
+         */
+        readonly hasLeftChild: boolean;
+        /**
+         * 检查此节点是否只有一个子节点以及它是否是右子节点
+         */
+        readonly hasOnlyRightChild: boolean;
+        /**
+         * 检查此节点是否有右子节点
+         */
+        readonly hasRightChild: boolean;
+        /**
+         * 检查此节点是否只有一个子节点以及它是否为左子节点
+         */
+        readonly hasOnlyLeftChild: boolean;
+        /**
+         * 检查此节点是否是其父节点的左子节点
+         */
+        readonly isLeftChild: boolean;
+        /**
+         * 检查此节点是否是其父节点的左子节点
+         */
+        readonly isRightChild: boolean;
+        /**
+         * 检查此节点是否为叶节点
+         */
+        readonly isLeafNode: boolean;
+        /**
+         * 返回直接子节点的数量：0、1、2（无、左或右，或两者）
+         */
+        readonly childrenCount: number;
+        compareTo(other: BSTNode<T>): number;
+    }
+}
+declare module algorithms {
     class BinarySearcher<T extends IComparable<T>> {
         private readonly _collection;
         private readonly _comparer;
@@ -28,6 +244,14 @@ declare module algorithms {
          */
         static calculate(n: number): number;
         private static factorial;
+    }
+}
+declare module algorithms {
+    /** 冒泡排序 */
+    class BubbleSorter {
+        static bubbleSort<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
+        static bubbleSortAscending<T>(collection: T[], comparer: Comparer<T>): void;
+        static bubbleSortDescending<T>(collection: T[], comparer: Comparer<T>): void;
     }
 }
 declare module algorithms {
@@ -63,6 +287,7 @@ declare module algorithms {
     class Comparers {
         static isEqualTo<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
         static isLessThan<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
+        static isGreaterThan<T extends IComparable<T>>(firstValue: T, secondValue: T): boolean;
     }
 }
 declare module algorithms {
@@ -111,6 +336,7 @@ declare module algorithms {
 declare module algorithms {
     class Helpers {
         static swap<T>(list: T[], firstIndex: number, secondIndex: number): void;
+        static populate<T>(list: T[][], rows: number, columns: number, defaultValue: T): void;
     }
 }
 declare module algorithms {
@@ -126,6 +352,14 @@ declare module algorithms {
 declare module algorithms {
     class InsertionSorter {
         static insertionSort<T extends IComparable<T>>(list: T[], comparer?: Comparer<T>): void;
+    }
+}
+declare module algorithms {
+    /** 奇偶排序 */
+    class OddEvenSorter {
+        static oddEvenSort<T extends IComparable<T>>(collection: T[], comparer?: Comparer<T>): void;
+        static oddEvenSortAscending<T>(collection: T[], comparer: Comparer<T>): void;
+        static oddEvenSortDescending<T>(collection: T[], comparer: Comparer<T>): void;
     }
 }
 declare module algorithms {
