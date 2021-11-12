@@ -428,6 +428,233 @@ var algorithms;
     }());
     algorithms.BinarySearchTree = BinarySearchTree;
 })(algorithms || (algorithms = {}));
+///<reference path="BinarySearchTree.ts"/>
+var algorithms;
+///<reference path="BinarySearchTree.ts"/>
+(function (algorithms) {
+    var AVLTree = /** @class */ (function (_super) {
+        __extends(AVLTree, _super);
+        function AVLTree(allowDuplicates) {
+            return _super.call(this, allowDuplicates) || this;
+        }
+        /**
+         * 返回节点的高度
+         * @param node
+         * @returns
+         */
+        AVLTree.prototype._getNodeHeight = function (node) {
+            if (node == null)
+                return -1;
+            return node.height;
+        };
+        /**
+         * 更新节点的高度
+         * @param node
+         * @returns
+         */
+        AVLTree.prototype._updateNodeHeight = function (node) {
+            if (node == null)
+                return;
+            node.height = 1 + Math.max(this._getNodeHeight(node.leftChild), this._getNodeHeight(node.rightChild));
+        };
+        /**
+         * 递归更新节点及其父节点的高度，直到树的根
+         * @param node
+         * @returns
+         */
+        AVLTree.prototype._updateHeightRecursive = function (node) {
+            if (node == null)
+                return;
+            node.height = 1 + Math.max(this._getNodeHeight(node.leftChild), this._getNodeHeight(node.rightChild));
+            this._updateHeightRecursive(node.parent);
+        };
+        /**
+         * 返回节点的 AVL 平衡因子
+         * @param node
+         * @returns
+         */
+        AVLTree.prototype._getBalanceFactor = function (node) {
+            if (node == null)
+                return -1;
+            return this._getNodeHeight(node.rightChild) - this._getNodeHeight(node.leftChild);
+        };
+        /**
+         * 在 AVL 树中向左旋转节点
+         * @param currentNode
+         * @returns
+         */
+        AVLTree.prototype._rotateLeftAt = function (currentNode) {
+            // 我们检查右节点，因为它将成为旋转的枢轴节点
+            if (currentNode == null || currentNode.hasRightChild == false)
+                return;
+            // 在 *右* 子项上旋转
+            var pivotNode = currentNode.rightChild;
+            // currentNode 的父节点
+            var parent = currentNode.parent;
+            // 检查 currentNode 是否是它父节点的左节点
+            var isLeftChild = currentNode.isLeftChild;
+            // 检查 currentNode 是否为 Root
+            var isRootNode = currentNode == this.root;
+            // 执行旋转
+            currentNode.rightChild = pivotNode.leftChild;
+            pivotNode.leftChild = currentNode;
+            // 更新父引用
+            currentNode.parent = pivotNode;
+            pivotNode.parent = parent;
+            if (currentNode.hasRightChild)
+                currentNode.rightChild.parent = currentNode;
+            // 如有必要，更新整个树的根
+            if (isRootNode)
+                this.root = pivotNode;
+            // 更新原始父节点的子节点
+            if (isLeftChild)
+                parent.leftChild = pivotNode;
+            else if (parent != null)
+                parent.rightChild = pivotNode;
+            // 更新每个节点的 AVL 高度
+            this._updateHeightRecursive(currentNode);
+        };
+        /**
+         * 在 AVL 树中向右旋转节点
+         * @param currentNode
+         * @returns
+         */
+        AVLTree.prototype._rotateRightAt = function (currentNode) {
+            if (currentNode == null || currentNode.hasLeftChild == false)
+                return;
+            var pivotNode = currentNode.leftChild;
+            var parent = currentNode.parent;
+            var isLeftChild = currentNode.isLeftChild;
+            var isRootNode = currentNode == this.root;
+            currentNode.leftChild = pivotNode.rightChild;
+            pivotNode.rightChild = currentNode;
+            currentNode.parent = pivotNode;
+            pivotNode.parent = parent;
+            if (currentNode.hasLeftChild)
+                currentNode.leftChild.parent = currentNode;
+            if (isRootNode)
+                this.root = pivotNode;
+            if (isLeftChild)
+                parent.leftChild = pivotNode;
+            else if (parent != null)
+                parent.rightChild = pivotNode;
+            this._updateHeightRecursive(currentNode);
+        };
+        /**
+         * 重新平衡节点周围的树
+         * @param currentNode
+         * @returns
+         */
+        AVLTree.prototype._rebalanceSubtreeTreeAt = function (currentNode) {
+            if (currentNode == null)
+                return;
+            var balance = this._getBalanceFactor(currentNode);
+            // 仅当平衡因子小于 -1 或大于 +1 时才平衡树
+            if (Math.abs(balance) >= 2) {
+                if (balance > 0) {
+                    var rightSubtreeBalance = this._getBalanceFactor(currentNode.rightChild);
+                    if (rightSubtreeBalance == 0 || rightSubtreeBalance == 1) {
+                        this._rotateLeftAt(currentNode);
+                    }
+                    else if (rightSubtreeBalance == -1) {
+                        this._rotateRightAt(currentNode.rightChild);
+                        this._rotateLeftAt(currentNode);
+                    }
+                }
+                else {
+                    var leftSubtreeBalance = this._getBalanceFactor(currentNode.leftChild);
+                    if (leftSubtreeBalance == 0 || leftSubtreeBalance == 1) {
+                        this._rotateRightAt(currentNode);
+                    }
+                    else if (leftSubtreeBalance == -1) {
+                        this._rotateLeftAt(currentNode.leftChild);
+                        this._rotateRightAt(currentNode);
+                    }
+                }
+            }
+        };
+        /**
+         * 围绕节点重新平衡整个树
+         * @param node
+         */
+        AVLTree.prototype._rebalanceTreeAt = function (node) {
+            var currentNode = node;
+            while (currentNode != null) {
+                this._updateHeightRecursive(currentNode);
+                var left = currentNode.leftChild;
+                var right = currentNode.rightChild;
+                if (this._getNodeHeight(left) >= 2 + this._getNodeHeight(right)) {
+                    if (currentNode.hasLeftChild && this._getNodeHeight(left.leftChild) >= this._getNodeHeight(left.rightChild)) {
+                        this._rotateRightAt(currentNode);
+                    }
+                    else {
+                        this._rotateLeftAt(currentNode.leftChild);
+                        this._rotateRightAt(currentNode);
+                    }
+                }
+                else if (this._getNodeHeight(right) >= 2 + this._getNodeHeight(left)) {
+                    if (currentNode.hasRightChild && this._getNodeHeight(right.rightChild) >= this._getNodeHeight(right.leftChild)) {
+                        this._rotateLeftAt(currentNode);
+                    }
+                    else {
+                        this._rotateRightAt(currentNode.rightChild);
+                        this._rotateLeftAt(currentNode);
+                    }
+                }
+                currentNode = currentNode.parent;
+            }
+        };
+        /**
+         * 将元素列表插入到树中
+         * @param item
+         */
+        AVLTree.prototype.insert = function (item) {
+            var newNode = new algorithms.AVLTreeNode(item);
+            var success = this._insertNode(newNode);
+            if (success == false && this._allowDuplicates == false)
+                throw new Error("Tree does not allow inserting duplicate elements");
+            this._rebalanceTreeAt(newNode);
+        };
+        /**
+         * 从树中删除一个项目
+         * @param item
+         */
+        AVLTree.prototype.remove = function (item) {
+            if (this.isEmpty)
+                throw new Error("tree is empty");
+            var node = this._findNode(this.root, item);
+            var status = this._remove(node);
+            if (status == true) {
+                this._rebalanceTreeAt(node);
+            }
+            else {
+                throw new Error("item was not found");
+            }
+        };
+        /**
+         * 从树中删除最小值
+         */
+        AVLTree.prototype.removeMin = function () {
+            if (this.isEmpty)
+                throw new Error("tree is empty");
+            var node = this._findMinNode(this.root);
+            this._remove(node);
+            this._rebalanceSubtreeTreeAt(node);
+        };
+        /**
+         * 从树中删除最大值
+         */
+        AVLTree.prototype.removeMax = function () {
+            if (this.isEmpty)
+                throw new Error("tree is empty");
+            var node = this._findMaxNode(this.root);
+            this._remove(node);
+            this._rebalanceTreeAt(node);
+        };
+        return AVLTree;
+    }(algorithms.BinarySearchTree));
+    algorithms.AVLTree = AVLTree;
+})(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
     var BSTNode = /** @class */ (function () {
@@ -583,6 +810,39 @@ var algorithms;
         return BSTNode;
     }());
     algorithms.BSTNode = BSTNode;
+})(algorithms || (algorithms = {}));
+///<reference path="./BinarySearchTreeNode.ts" />
+var algorithms;
+///<reference path="./BinarySearchTreeNode.ts" />
+(function (algorithms) {
+    var AVLTreeNode = /** @class */ (function (_super) {
+        __extends(AVLTreeNode, _super);
+        function AVLTreeNode(value, height, parent, left, right) {
+            if (height === void 0) { height = 0; }
+            if (parent === void 0) { parent = null; }
+            if (left === void 0) { left = null; }
+            if (right === void 0) { right = null; }
+            var _this = _super.call(this, value) || this;
+            _this._height = 0;
+            _this.height = height;
+            _this.parent = parent;
+            _this.leftChild = left;
+            _this.rightChild = right;
+            return _this;
+        }
+        Object.defineProperty(AVLTreeNode.prototype, "height", {
+            get: function () {
+                return this._height;
+            },
+            set: function (value) {
+                this._height = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return AVLTreeNode;
+    }(algorithms.BSTNode));
+    algorithms.AVLTreeNode = AVLTreeNode;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {

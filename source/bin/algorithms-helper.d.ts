@@ -165,6 +165,77 @@ declare module algorithms {
     }
 }
 declare module algorithms {
+    class AVLTree<T extends IComparable<T>> extends BinarySearchTree<T> {
+        protected _root: AVLTreeNode<T>;
+        constructor(allowDuplicates: boolean);
+        /**
+         * 返回节点的高度
+         * @param node
+         * @returns
+         */
+        private _getNodeHeight;
+        /**
+         * 更新节点的高度
+         * @param node
+         * @returns
+         */
+        private _updateNodeHeight;
+        /**
+         * 递归更新节点及其父节点的高度，直到树的根
+         * @param node
+         * @returns
+         */
+        private _updateHeightRecursive;
+        /**
+         * 返回节点的 AVL 平衡因子
+         * @param node
+         * @returns
+         */
+        private _getBalanceFactor;
+        /**
+         * 在 AVL 树中向左旋转节点
+         * @param currentNode
+         * @returns
+         */
+        private _rotateLeftAt;
+        /**
+         * 在 AVL 树中向右旋转节点
+         * @param currentNode
+         * @returns
+         */
+        private _rotateRightAt;
+        /**
+         * 重新平衡节点周围的树
+         * @param currentNode
+         * @returns
+         */
+        private _rebalanceSubtreeTreeAt;
+        /**
+         * 围绕节点重新平衡整个树
+         * @param node
+         */
+        private _rebalanceTreeAt;
+        /**
+         * 将元素列表插入到树中
+         * @param item
+         */
+        insert(item: T): void;
+        /**
+         * 从树中删除一个项目
+         * @param item
+         */
+        remove(item: T): void;
+        /**
+         * 从树中删除最小值
+         */
+        removeMin(): void;
+        /**
+         * 从树中删除最大值
+         */
+        removeMax(): void;
+    }
+}
+declare module algorithms {
     class BSTNode<T extends IComparable<T>> {
         private _value;
         private _parent;
@@ -212,6 +283,13 @@ declare module algorithms {
          */
         readonly childrenCount: number;
         compareTo(other: BSTNode<T>): number;
+    }
+}
+declare module algorithms {
+    class AVLTreeNode<T extends IComparable<T>> extends BSTNode<T> {
+        private _height;
+        constructor(value: T, height?: number, parent?: AVLTreeNode<T>, left?: AVLTreeNode<T>, right?: AVLTreeNode<T>);
+        height: number;
     }
 }
 declare module algorithms {
