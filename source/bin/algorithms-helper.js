@@ -639,7 +639,7 @@ var algorithms;
                 throw new Error("tree is empty");
             var node = this._findMinNode(this.root);
             this._remove(node);
-            this._rebalanceSubtreeTreeAt(node);
+            this._rebalanceTreeAt(node);
         };
         /**
          * 从树中删除最大值

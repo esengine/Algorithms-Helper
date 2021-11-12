@@ -250,7 +250,7 @@ module algorithms {
 
             let node = this._findMinNode(this.root) as AVLTreeNode<T>;
             this._remove(node);
-            this._rebalanceSubtreeTreeAt(node);
+            this._rebalanceTreeAt(node);
         }
 
         /**
