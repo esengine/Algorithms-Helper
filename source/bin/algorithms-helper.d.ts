@@ -293,6 +293,87 @@ declare module algorithms {
     }
 }
 declare module algorithms {
+    /**
+     * 最大堆数据结构
+     */
+    class BinaryMaxHeap<T extends IComparable<T>> {
+        /**
+         * 元素列表
+         */
+        private _collection;
+        private _heapComparer;
+        constructor(capacity?: number, comparer?: Comparer<T>);
+        /**
+         * 从内部数组列表 _collection 构建最大堆
+         */
+        private _buildMaxHeap;
+        /**
+         * 用于在插入后恢复堆状态
+         * @param nodeIndex
+         */
+        private _siftUp;
+        /**
+         * 用于构建最大堆
+         * @param nodeIndex
+         * @param lastIndex
+         */
+        private _maxHeapify;
+        /**
+         * 返回堆中元素的数量
+         */
+        readonly count: number;
+        /**
+         * 检查此堆是否为空
+         */
+        readonly isEmpty: boolean;
+        get(index: number): T;
+        set(index: number, value: T): void;
+        /**
+         * 堆化指定的 newCollection。 覆盖当前堆
+         * @param newCollection
+         */
+        initialize(newCollection: T[]): void;
+        /**
+         * 向堆中添加一个新键
+         * @param heapKey
+         */
+        add(heapKey: T): void;
+        /**
+         * 找到最大堆的最大节点
+         * @returns
+         */
+        peek(): T;
+        /**
+         * 从最小堆中删除最小值的节点
+         */
+        removeMax(): void;
+        /**
+         * 从堆中删除后，从最大堆中返回最大值的节点
+         * @returns
+         */
+        extractMax(): T;
+        /**
+         * 清除堆
+         */
+        clear(): void;
+        /**
+         * 重建堆
+         */
+        rebuildHeap(): void;
+        /**
+         * 将两个堆联合在一起，返回两个堆元素的新最小堆
+         * @param firstMaxHeap
+         * @param secondMaxHeap
+         */
+        union(firstMaxHeap: BinaryMaxHeap<T>, secondMaxHeap: BinaryMaxHeap<T>): BinaryMaxHeap<IComparable<{}>>;
+        /**
+         * 返回一个新的最小堆，其中包含此堆的所有元素
+         * @returns
+         */
+        toMinHeap(): BinaryMaxHeap<T>;
+    }
+}
+declare module algorithms {
     class BinarySearcher<T extends IComparable<T>> {
         private readonly _collection;
         private readonly _comparer;

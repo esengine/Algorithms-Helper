@@ -846,6 +846,197 @@ var algorithms;
 })(algorithms || (algorithms = {}));
 var algorithms;
 (function (algorithms) {
+    /**
+     * 最大堆数据结构
+     */
+    var BinaryMaxHeap = /** @class */ (function () {
+        function BinaryMaxHeap(capacity, comparer) {
+            if (capacity === void 0) { capacity = 0; }
+            if (comparer === void 0) { comparer = null; }
+            this._heapComparer = algorithms.Comparer.default;
+            this._collection = [];
+            this._heapComparer = comparer || algorithms.Comparer.default;
+        }
+        /**
+         * 从内部数组列表 _collection 构建最大堆
+         */
+        BinaryMaxHeap.prototype._buildMaxHeap = function () {
+            var lastIndex = this._collection.length - 1;
+            var lastNodeWithChildren = lastIndex / 2;
+            for (var node = lastNodeWithChildren; node >= 0; node--) {
+                this._maxHeapify(node, lastIndex);
+            }
+        };
+        /**
+         * 用于在插入后恢复堆状态
+         * @param nodeIndex
+         */
+        BinaryMaxHeap.prototype._siftUp = function (nodeIndex) {
+            var parent = (nodeIndex - 1) / 2;
+            while (this._heapComparer.compare(this._collection[nodeIndex], this._collection[parent]) > 0) {
+                algorithms.Helpers.swap(this._collection, parent, nodeIndex);
+                nodeIndex = parent;
+                parent = (nodeIndex - 1) / 2;
+            }
+        };
+        /**
+         * 用于构建最大堆
+         * @param nodeIndex
+         * @param lastIndex
+         */
+        BinaryMaxHeap.prototype._maxHeapify = function (nodeIndex, lastIndex) {
+            // 假设子树 left(node) 和 right(node) 是最大堆
+            var left = (nodeIndex * 2) + 1;
+            var right = left + 1;
+            var largest = nodeIndex;
+            if (left <= lastIndex && this._heapComparer.compare(this._collection[left], this._collection[nodeIndex]) > 0)
+                largest = left;
+            if (right <= lastIndex && this._heapComparer.compare(this._collection[right], this._collection[largest]) > 0)
+                largest = right;
+            if (largest != nodeIndex) {
+                algorithms.Helpers.swap(this._collection, nodeIndex, largest);
+                this._maxHeapify(largest, lastIndex);
+            }
+        };
+        Object.defineProperty(BinaryMaxHeap.prototype, "count", {
+            /**
+             * 返回堆中元素的数量
+             */
+            get: function () {
+                return this._collection.length;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(BinaryMaxHeap.prototype, "isEmpty", {
+            /**
+             * 检查此堆是否为空
+             */
+            get: function () {
+                return this._collection.length == 0;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        BinaryMaxHeap.prototype.get = function (index) {
+            if (index < 0 || index > this.count || this.count == 0) {
+                throw new Error("index out of range");
+            }
+            return this._collection[index];
+        };
+        BinaryMaxHeap.prototype.set = function (index, value) {
+            if (index < 0 || index >= this.count) {
+                throw new Error("index out of range");
+            }
+            this._collection[index] = value;
+            if (index != 0 && this._heapComparer.compare(this._collection[index], this._collection[(index - 1) / 2]) > 0)
+                this._siftUp(index);
+            else
+                this._maxHeapify(index, this._collection.length - 1);
+        };
+        /**
+         * 堆化指定的 newCollection。 覆盖当前堆
+         * @param newCollection
+         */
+        BinaryMaxHeap.prototype.initialize = function (newCollection) {
+            if (newCollection.length > 0) {
+                this._collection = [];
+                for (var i = 0; i < newCollection.length; ++i) {
+                    this._collection.push(newCollection[i]);
+                }
+                this._buildMaxHeap();
+            }
+        };
+        /**
+         * 向堆中添加一个新键
+         * @param heapKey
+         */
+        BinaryMaxHeap.prototype.add = function (heapKey) {
+            this._collection.push(heapKey);
+            if (!this.isEmpty) {
+                this._siftUp(this._collection.length - 1);
+            }
+        };
+        /**
+         * 找到最大堆的最大节点
+         * @returns
+         */
+        BinaryMaxHeap.prototype.peek = function () {
+            if (this.isEmpty) {
+                throw new Error("heap is empty");
+            }
+            return this._collection[0];
+        };
+        /**
+         * 从最小堆中删除最小值的节点
+         */
+        BinaryMaxHeap.prototype.removeMax = function () {
+            if (this.isEmpty) {
+                throw new Error("heap is empty");
+            }
+            var max = 0;
+            var last = this._collection.length - 1;
+            algorithms.Helpers.swap(this._collection, max, last);
+            this._collection.splice(last, 1);
+            last--;
+            this._maxHeapify(0, last);
+        };
+        /**
+         * 从堆中删除后，从最大堆中返回最大值的节点
+         * @returns
+         */
+        BinaryMaxHeap.prototype.extractMax = function () {
+            var max = this.peek();
+            this.removeMax();
+            return max;
+        };
+        /**
+         * 清除堆
+         */
+        BinaryMaxHeap.prototype.clear = function () {
+            if (this.isEmpty) {
+                throw new Error("heap is empty");
+            }
+            this._collection.length = 0;
+        };
+        /**
+         * 重建堆
+         */
+        BinaryMaxHeap.prototype.rebuildHeap = function () {
+            this._buildMaxHeap();
+        };
+        /**
+         * 将两个堆联合在一起，返回两个堆元素的新最小堆
+         * @param firstMaxHeap
+         * @param secondMaxHeap
+         */
+        BinaryMaxHeap.prototype.union = function (firstMaxHeap, secondMaxHeap) {
+            if (firstMaxHeap == null || secondMaxHeap == null)
+                throw new Error("null heaps are not allowed");
+            var size = firstMaxHeap.count + secondMaxHeap.count;
+            var newHeap = new BinaryMaxHeap(size, algorithms.Comparer.default);
+            while (firstMaxHeap.isEmpty == false)
+                newHeap.add(firstMaxHeap.extractMax());
+            while (secondMaxHeap.isEmpty == false)
+                newHeap.add(secondMaxHeap.extractMax());
+            firstMaxHeap = secondMaxHeap = null;
+            return newHeap;
+        };
+        /**
+         * 返回一个新的最小堆，其中包含此堆的所有元素
+         * @returns
+         */
+        BinaryMaxHeap.prototype.toMinHeap = function () {
+            var newMinHeap = new BinaryMaxHeap(this.count, this._heapComparer);
+            newMinHeap.initialize(this._collection);
+            return newMinHeap;
+        };
+        return BinaryMaxHeap;
+    }());
+    algorithms.BinaryMaxHeap = BinaryMaxHeap;
+})(algorithms || (algorithms = {}));
+var algorithms;
+(function (algorithms) {
     var BinarySearcher = /** @class */ (function () {
         function BinarySearcher(collection, comparer) {
             this._currentItemIndex = 0;
